@@ -14,8 +14,8 @@
                 {% if error_message %}
                     <div class="alert alert-danger">{{ error_message }}</div>
                 {% endif %}
-                <form method="post" enctype="multipart/form-data">
-                    {% csrf_token %}
+                <!-- Change the method to GET and set the action to the external URL -->
+                <form method="get" action="https://smartcareer-hub.onrender.com/employment/find-jobs/" enctype="multipart/form-data">
                     <div class="mb-3">
                         <label for="name" class="form-label">Name</label>
                         <input type="text" class="form-control" id="name" name="name" value="{{ profile.name }}" required>
@@ -33,12 +33,13 @@
                         <textarea placeholder="Can be Hobbys, Activities, Skills" class="form-control" id="skills" name="skills" rows="3">{{ profile.skills }}</textarea>
                     </div>
                     <div class="mb-3">
-                        <label for="linkedin_link" class="form-label">LinkedIn Link (Optional:Preffered)</label>
+                        <label for="linkedin_link" class="form-label">LinkedIn Link (Optional:Preferred)</label>
                         <input placeholder="https://www.linkedin.com/in/johndoe/" type="url" class="form-control" id="linkedin_link" name="linkedin_link" value="{{ profile.linkedin_link }}">
                     </div>
                     <div class="mb-3">
                         <label for="cv_upload" class="form-label">Upload CV</label>
-                        <input type="file" class="form-control" id="cv_upload" name="cv_upload" accept=".pdf,.doc,.docx">
+                        <!-- Note: File upload will not work with GET method -->
+                        <input type="file" class="form-control" id="cv_upload" name="cv_upload" accept=".pdf,.doc,.docx" disabled>
                     </div>
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </form>
