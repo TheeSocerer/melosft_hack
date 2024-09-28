@@ -82,7 +82,7 @@ def find_jobs(request):
         conn = http.client.HTTPSConnection("jobs-api14.p.rapidapi.com")
         
         headers = {
-            'x-rapidapi-key': "605168638cmsh9d311ef222f78b1p19dcfbjsn84cf1131c625",
+            'x-rapidapi-key': "040ba80d01msh9967db2271b9ddcp14f293jsncd7b2a5be4c9",
             'x-rapidapi-host': "jobs-api14.p.rapidapi.com"
         }
         
@@ -106,7 +106,7 @@ def fetch_linkedin_data(url):
     conn = http.client.HTTPSConnection("linkedin-data-api.p.rapidapi.com")
     
     headers = {
-        'x-rapidapi-key': xrapidapikey,
+        'x-rapidapi-key': "040ba80d01msh9967db2271b9ddcp14f293jsncd7b2a5be4c9",
         'x-rapidapi-host': "linkedin-data-api.p.rapidapi.com"
     }
     
