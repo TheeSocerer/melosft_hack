@@ -1,11 +1,16 @@
 from django.shortcuts import render, redirect
 from .models import Profile, Job, Skill, LearnEarnOpportunity
-from django.views.decorators.csrf import csrf_protect
+import random
+import http.client
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from .models import Profile
+import os
+import json
 
 
+xrapidapikey = os.getenv('x-rapidapi-key')
 
-
-@csrf_protect 
 def personal_info(request):
     if request.method == 'POST':
         # Handle personal information submission
@@ -13,54 +18,103 @@ def personal_info(request):
         email = request.POST.get('email')
         phone_number = request.POST.get('phone_number')
         skills = request.POST.get('skills')
-        experience = request.POST.get('experience')
-        education = request.POST.get('education')
+        experience = request.POST.get('linkedin_link')
         
-        # Create a new Profile instance and save it to the database
-        profile = Profile(name=name, email=email, phone_number=phone_number, skills=skills, experience=experience, education=education)
+        # Perform basic form validations
+        if not name or not email:
+            error_message = "Name and email are required fields."
+            return render(request, 'personal_info.html', {'error_message': error_message})
+        
+        # Update or create the user's profile
+        profile = Profile(name=name, email=email, phone_number=phone_number, skills=skills, experience=experience)
+
         profile.save()
-        
-        return redirect('salary_estimation')
+
+        return redirect(request, 'salary_estimation')
     else:
         return render(request, 'personal_info.html')
-@csrf_protect 
+
+
 def salary_estimation(request):
-    # Retrieve user's profile from the database
-    profile = Profile.objects.get(user=request.user)
+    # Retrieve the profile for the currently logged-in user
+    profile = Profile.objects.filter(name=request.name).first()
     
-    # Estimate salary range based on user's profile
-    salary_range = estimate_salary_range(profile)
-    
-    return render(request, 'salary_estimation.html', {'salary_range': salary_range})
+    if profile:
+        # Estimate salary range based on user's profile
+        salary_range = estimate_salary_range()
+        
+        # Fetch LinkedIn profile data if a URL is provided
+        linkedin_data = None
+        if profile.experience:
+            linkedin_data = fetch_linkedin_data(profile.experience)
+        
+        context = {
+            'salary_range': salary_range,
+            'linkedin_data': linkedin_data,
+        }
+        return render(request, 'find_jobs.html', context)
+    else:
+        # Redirect to the personal information form if no profile exists for the user
+        return redirect('personal_info')
 
-def estimate_salary_range(obj):
-    print(obj)
-    return 10000
 
-@csrf_protect 
+def estimate_salary_range():
+    min_salary = random.randint(60000, 120000)
+    max_salary = random.randint(min_salary, 160000)
+    return f"{min_salary:,} - {max_salary:,}"
+
+
+
 def work_now(request):
     # Retrieve on-demand remote jobs from the database
     jobs = Job.objects.filter(category='on-demand')
     return render(request, 'work_now.html', {'jobs': jobs})
 
-@csrf_protect 
+
 def find_jobs(request):
-    if request.method == 'POST':
-        # Retrieve search and filter criteria from the form
-        title = request.POST.get('title')
-        skills = request.POST.get('skills')
-        experience_level = request.POST.get('experience_level')
+    if request.method == 'GET':
+        search_query = request.GET.get('search', 'Digital')
+        location = request.GET.get('location', 'Johannesburg')
         
-        # Retrieve job listings from the database based on search and filter criteria
-        jobs = Job.objects.filter(title__icontains=title, skills_required__icontains=skills, experience_required=experience_level)
-    else:
-        jobs = Job.objects.all()
+        conn = http.client.HTTPSConnection("jobs-api14.p.rapidapi.com")
+        
+        headers = {
+            'x-rapidapi-key': "605168638cmsh9d311ef222f78b1p19dcfbjsn84cf1131c625",
+            'x-rapidapi-host': "jobs-api14.p.rapidapi.com"
+        }
+        
+        conn.request("GET", f"/list?query={search_query}&location={location}&distance=1.0&language=en_GB&remoteOnly=false&datePosted=month&employmentTypes=fulltime%3Bparttime%3Bintern%3Bcontractor&index=0", headers=headers)
+        
+        res = conn.getresponse()
+        data = res.read()
+
+        
+        jobs_data = json.loads(data.decode("utf-8"))
+        jobs = jobs_data['jobs']
+        description_limit = 150
+        for job in jobs:
+            if len(job['description']) > description_limit:
+                job['description'] = job['description'][:description_limit] + '...'
     
-    skills = Skill.objects.all().values_list('name', flat=True).distinct()
-    experience_levels = Job.objects.values_list('experience_required', flat=True).distinct()
+    return render(request, 'find_jobs.html', {'jobs': jobs, 'search_query': search_query, 'location': location})
+        
+        
+def fetch_linkedin_data(url):
+    conn = http.client.HTTPSConnection("linkedin-data-api.p.rapidapi.com")
     
-    return render(request, 'find_jobs.html', {'jobs': jobs, 'skills': skills, 'experience_levels': experience_levels})
-@csrf_protect 
+    headers = {
+        'x-rapidapi-key': xrapidapikey,
+        'x-rapidapi-host': "linkedin-data-api.p.rapidapi.com"
+    }
+    
+    conn.request("GET", f"/get-profile-data-by-url?url={url}", headers=headers)
+    
+    res = conn.getresponse()
+    data = res.read()
+    
+    return json.loads(data.decode("utf-8"))
+
+
 def job_details(request, job_id):
     # Retrieve the job details from the database based on the job_id
     job = Job.objects.get(id=job_id)
@@ -75,10 +129,10 @@ def job_details(request, job_id):
     recommended_skills = get_recommended_skills(job)
     
     return render(request, 'job_details.html', {'job': job, 'is_matched': is_matched, 'recommended_skills': recommended_skills})
-@csrf_protect 
+
 def profile(request):
     # Retrieve the user's profile from the database
-    profile = Profile.objects.get(user=request.user)
+    profile = Profile.objects.get(name=request.name)
     
     if request.method == 'POST':
         # Handle profile updates
@@ -101,7 +155,7 @@ def profile(request):
         return redirect('profile')
     else:
         return render(request, 'profile.html', {'profile': profile})
-@csrf_protect 
+
 def enhance_resume(request):
     # Retrieve the user's profile from the database
     profile = Profile.objects.get(user=request.user)
@@ -116,7 +170,7 @@ def enhance_resume(request):
     # Implement the logic to generate and serve the enhanced resume file
     
     return redirect('profile')
-@csrf_protect 
+
 def upskill(request):
     # Retrieve skills and learning opportunities from the database
     skill_categories = {}

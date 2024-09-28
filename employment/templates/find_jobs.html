@@ -8,26 +8,15 @@
 <form method="get">
     <div class="row mb-3">
         <div class="col-md-4">
-            <input type="text" class="form-control" name="search" placeholder="Search jobs..." value="{{ request.GET.search }}">
+            <input type="text" class="form-control" name="search" placeholder="Search jobs by name..." value="{{ search_query }}">
         </div>
         <div class="col-md-4">
-            <select class="form-select" name="skills">
-                <option value="">Select skills...</option>
-                {% for skill in skills %}
-                <option value="{{ skill }}" {% if skill == request.GET.skills %}selected{% endif %}>{{ skill }}</option>
-                {% endfor %}
-            </select>
+            <input type="text" class="form-control" name="location" placeholder="Location" value="{{ location }}">
         </div>
-        <div class="col-md-4">
-            <select class="form-select" name="experience">
-                <option value="">Select experience...</option>
-                {% for exp in experience_levels %}
-                <option value="{{ exp }}" {% if exp == request.GET.experience %}selected{% endif %}>{{ exp }}</option>
-                {% endfor %}
-            </select>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary">Search</button>
         </div>
     </div>
-    <button type="submit" class="btn btn-primary">Search</button>
 </form>
 
 <hr>
@@ -39,9 +28,11 @@
             <div class="card-body">
                 <h5 class="card-title">{{ job.title }}</h5>
                 <p class="card-text">{{ job.description }}</p>
-                <p class="card-text">Posted: {{ job.posted_date }}</p>
-                <p class="card-text">Deadline: {{ job.deadline }}</p>
-                <a href="{% url 'job_details' job.id %}" class="btn btn-primary">View Details</a>
+                <p class="card-text">Location: {{ job.location }}</p>
+                <p class="card-text">Employment Type: {{ job.employmentType }}</p>
+                {% for provider in job.jobProviders %}
+                <a href="{{ provider.url }}" target="_blank" class="btn btn-primary mb-2">{{ provider.jobProvider }}</a>
+                {% endfor %}            
             </div>
         </div>
     </div>

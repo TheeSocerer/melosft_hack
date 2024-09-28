@@ -11,23 +11,34 @@
                 <h4>Personal Information</h4>
             </div>
             <div class="card-body">
+                {% if error_message %}
+                    <div class="alert alert-danger">{{ error_message }}</div>
+                {% endif %}
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="mb-3">
                         <label for="name" class="form-label">Name</label>
-                        <input type="text" class="form-control" id="name" name="name" required>
+                        <input type="text" class="form-control" id="name" name="name" value="{{ profile.name }}" required>
                     </div>
                     <div class="mb-3">
                         <label for="email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="email" name="email" required>
+                        <input type="email" class="form-control" id="email" name="email" value="{{ profile.email }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone_number" class="form-label">Phone Number</label>
+                        <input type="tel" class="form-control" id="phone_number" name="phone_number" value="{{ profile.phone_number }}">
                     </div>
                     <div class="mb-3">
                         <label for="skills" class="form-label">Skills</label>
-                        <textarea class="form-control" id="skills" name="skills" rows="3"></textarea>
+                        <textarea placeholder="Can be Hobbys, Activities, Skills" class="form-control" id="skills" name="skills" rows="3">{{ profile.skills }}</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="linkedin_link" class="form-label">LinkedIn Link (Optional:Preffered)</label>
+                        <input placeholder="https://www.linkedin.com/in/johndoe/" type="url" class="form-control" id="linkedin_link" name="linkedin_link" value="{{ profile.linkedin_link }}">
                     </div>
                     <div class="mb-3">
                         <label for="cv_upload" class="form-label">Upload CV</label>
-                        <input type="file" class="form-control" id="cv_upload" name="cv_upload" accept="image/*">
+                        <input type="file" class="form-control" id="cv_upload" name="cv_upload" accept=".pdf,.doc,.docx">
                     </div>
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </form>
