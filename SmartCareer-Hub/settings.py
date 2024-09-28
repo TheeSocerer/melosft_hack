@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-iap0)c628)r+#ohbtq-q27@(5$u49ci^2=sw4x@q6lx%y&!zhc
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '423e-197-185-100-207.ngrok-free.app']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '423e-197-185-100-207.ngrok-free.app','smartcareer-hub.onrender.com']
 
 
 
@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'employment',
     'cv_revamp',
     'simulation',
+    'chatbot'
 ]
 
 MIDDLEWARE = [
@@ -129,3 +130,9 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTHENTICATION_BACKENDS = [
+    'accounts.backends.PhoneNumberBackend',  # Your custom backend
+    'django.contrib.auth.backends.ModelBackend',  # Default backend
+]
+

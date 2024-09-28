@@ -5,10 +5,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <title>Register</title>
+    <style>
+        body {
+            background-image: url('register.webp'); 
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            height: 100vh;
+            display: flex;
+            justify-content: center; 
+            align-items: center; 
+            margin: 0; 
+        }
+        .register-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 12px; 
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); 
+            width: 100%;
+            max-width: 400px; 
+        }
+        h2 {
+            margin-bottom: 20px;
+            color: #0056b3;
+        }
+        .btn-primary {
+            background-color: #007bff; 
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3; 
+        }
+        .alert {
+            margin-top: 20px; 
+        }
+        .input-group {
+            margin-bottom: 15px; /* Add spacing between input groups */
+        }
+        .form-control {
+            border-radius: 0.5rem; /* Rounded corners for inputs */
+        }
+        .form-select {
+            border-radius: 0.5rem 0 0 0.5rem; /* Rounded corners for select */
+        }
+    </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <h2>Register</h2>
+    <div class="register-container">
+        <h2 class="text-center">Register</h2>
         <form method="POST" action="{% url 'register' %}">
             {% csrf_token %}
             <div class="mb-3">
@@ -19,19 +63,26 @@
                         <option value="+91" data-flag="in">🇮🇳 India (+91)</option>
                         <option value="+61" data-flag="au">🇦🇺 Australia (+61)</option>
                         <option value="+27" data-flag="za">🇿🇦 South Africa (+27)</option>
-                        <!-- Add more country codes as needed -->
                     </select>
                     <input type="tel" class="form-control" id="phoneNumber" name="phone_number" placeholder="Enter your phone number" required>
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary">Register</button>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password:</label>
+                <input type="password" class="form-control" name="password" id="password" placeholder="Enter your password" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Register</button>
         </form>
 
         {% if messages %}
             {% for message in messages %}
-                <div class="alert alert-info mt-3">{{ message }}</div>
+                <div class="alert alert-info">{{ message }}</div>
             {% endfor %}
         {% endif %}
+
+        <div class="text-center mt-3">
+            <p>Already have an account? <a href="{% url 'login' %}" class="btn btn-link">Login here</a></p>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>

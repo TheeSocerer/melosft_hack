@@ -3,7 +3,7 @@ from django.db import models
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, phone_number, password=None, **extra_fields):
-        """Create and return a user with an email and password."""
+        """Create and return a user with a phone number and password."""
         if not phone_number:
             raise ValueError("The Phone Number field must be set")
 
@@ -13,7 +13,7 @@ class CustomUserManager(BaseUserManager):
         return user
 
     def create_superuser(self, phone_number, password=None, **extra_fields):
-        """Create and return a superuser with an email and password."""
+        """Create and return a superuser with a phone number and password."""
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
 
@@ -24,12 +24,12 @@ class CustomUserManager(BaseUserManager):
 
         return self.create_user(phone_number, password, **extra_fields)
 
-
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     phone_number = models.CharField(max_length=15, unique=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-    
+    date_joined = models.DateTimeField(auto_now_add=True)  # Track when the user joined
+
     USERNAME_FIELD = 'phone_number'
     REQUIRED_FIELDS = []
 
