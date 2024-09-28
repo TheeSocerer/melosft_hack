@@ -86,7 +86,7 @@ def find_jobs(request):
             'x-rapidapi-host': "jobs-api14.p.rapidapi.com"
         }
         
-        conn.request("GET", f"/list?query={search_query}&location={location}&distance=1.0&language=en_GB&remoteOnly=false&datePosted=month&employmentTypes=fulltime%3Bparttime%3Bintern%3Bcontractor&index=0", headers=headers)
+        conn.request("GET", f"/list?query={search_query}&location={location}&distance=10&language=en_GB&remoteOnly=false&datePosted=month&employmentTypes=fulltime%3Bparttime%3Bintern%3Bcontractor&index=0".strip().replace(' ', '_'), headers=headers)
         
         res = conn.getresponse()
         data = res.read()
