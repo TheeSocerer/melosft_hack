@@ -71,6 +71,9 @@ def work_now(request):
     return render(request, 'work_now.html', {'jobs': jobs})
 
 
+
+
+
 def find_jobs(request):
     if request.method == 'GET':
         search_query = request.GET.get('search', 'Digital')
