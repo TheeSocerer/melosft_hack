@@ -20,7 +20,9 @@ def register_view(request):
         else:
             # Create a new user
             user = CustomUser.objects.create_user(phone_number=phone_number, password=password)
-            login(request, user)  # Log the user in after registration
+            backend = 'accounts.backends.PhoneNumberBackend'  # Specify your backend
+            login(request, user, backend=backend)
+            # login(request, user)  # Log the user in after registration
             return redirect('personal_info')  # Redirect to a home page or dashboard
     return render(request, 'register.html')
 
