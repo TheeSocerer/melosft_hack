@@ -10,4 +10,5 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     path('enhance-resume/', views.enhance_resume, name='enhance_resume'),
     path('upskill/', views.upskill, name='upskill'),
+    path('interview/', views.interview_simulation, name='interview'),
 ]

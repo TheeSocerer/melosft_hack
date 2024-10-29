@@ -174,6 +174,10 @@ def enhance_resume(request):
     
     return redirect('profile')
 
+
+def interview_simulation(request):
+    return render(request, 'simulation/interview.html')
+
 def upskill(request):
     # Retrieve skills and learning opportunities from the database
     skill_categories = {}
